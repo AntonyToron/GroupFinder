@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html ng-app="app" class="container-fluid">
+<head>
+  <link rel="stylesheet/less" type="text/css" href="bootstrap-social.css"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css?family=Playfair+Display:900" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Crimson+Text:700" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Droid+Sans:700" rel="stylesheet">
+<link href="jquery-ui.css" type="text/css" rel="stylesheet">
+<link href="tokenfield-typeahead.css" rel="stylesheet">
+<link href="bootstrap-tokenfield.css" rel="stylesheet">
+<script src="https://use.fontawesome.com/8ddbabddf6.js"></script>
+<link href="navbar-fixed-side.css" rel="stylesheet" />
+<link href='http://fonts.googleapis.com/css?family=Gafata|Roboto:700' rel='stylesheet' type='text/css'>
+<link href="https://fonts.googleapis.com/css?family=Julius+Sans+One" rel="stylesheet">
+  <title></title>
+</head>
+  <body ng-controller="MainCtrl" ng-cloak class="container-fluid">
+    <div id="display" ng-cloak style="display:none;">
+      <nav class="navbar navbar-default navbar-fixed-top" style="padding-right:20px">
+        <div class="container-fluid row" id="header">
+          <!-- <div class="navbar-header col-xs-3">
+            <a class="navbar-brand"  href='#' index="0">
+              <img width="30" height="30" alt="Brand" src="people.png"/>
+            </a>
+          </div> -->
+          <uib-tabset active="activeForm" type="tabs" class="col-xs-5">
+            <uib-tab index="0">
+              <uib-tab-heading style="font-family: 'Julius Sans One', sans-serif;">
+                <i class="fa fa-user-circle fa-2x" aria-hidden="true"></i>
+                
+              </uib-tab-heading>
+            </uib-tab>
+            <uib-tab index="1">
+              <uib-tab-heading>
+                <i class="fa fa-search fa-2x" aria-hidden="true"></i>
+              </uib-tab-heading>
+            </uib-tab>
+            <uib-tab index="2">
+              <uib-tab-heading>
+                <i class="fa fa-plus fa-2x" aria-hidden="true"></i>
+              </uib-tab-heading>
+            </uib-tab>
+            <uib-tab index="3">
+              <uib-tab-heading>
+                <i class="fa fa-group fa-2x" aria-hidden="true"></i>
+              </uib-tab-heading>
+            </uib-tab>
+          </uib-tabset>
+            <button class="navbar-right btn btn-default navbar-btn col-xs-2" ng-click =deleteCurrentUser($scope)>Delete Account</button>
+           <button class="navbar-right btn btn-default navbar-btn col-xs-2" ng-click =signout($scope)>Sign Out</button>
+           <img id ="thumbnail-image" class="img-thumbnail navbar-right"  style="height: 50px"/>
+         
+         <!-- <button href="#" ng-click="signout()">Sign out</button> -->
+        </div>
+      </nav>
+
+      <h2 id = "display_name" class=""></h2>
+      <div class="">
+      <uib-tabset active="activeForm" type="tabs" class="tabs-left" >
+        <uib-tab index="0" heading="Dashboard">
+          <h3>All Groups</h3>
+          <label> Search all groups: <input ng-model="searchAllGroups"></label>
+          <div ng-repeat="group in searchGroupsArray | filter:searchAllGroups">
+            <div class="card card-inverse card-primary mb-3 text-center" style="background-color: #0275d8; border-color: #0275d8; color: white">
+              <div class="card-block">
+                  <h4 class="card-title">{{group.name}}</h4>
+                  <h6 class="card-subtitle mb-2">Class: {{group.class}}</h6>
+                  <p class="card-text">Location: {{group.location}}</p>
+                  <p class="card-text">Description: {{group.details}}</p>
+                  <footer style="color:white">Creator: {{group.adminName}}</footer>
+                  <button ng-click="deleteYourGroup(group.name, group.class, group.location)">Delete Your Group</button>
+              </div>
+            </div>
+          </div>
+        </uib-tab>
+        <uib-tab index="1" heading="Lookup Users">
+        <div style="padding: 10px">
+          <label> Search by name or phrase: <input ng-model="searchText"></label>
+          <div ng-repeat="user in usersData | filter:searchText"> <!-- filters through -->
+            <div>
+              <label>{{user.name}}</label>
+
+              <pre>{{user.email}}</pre>
+              <pre>Friends: {{user.friends}}</pre>
+            </div>
+          </div>
+        </div>
+        </uib-tab>
+
+        <!-- Create Group -->
+        <uib-tab index="2" heading="Create a Group">
+        <div class="container-fluid center" style="background-color:white; padding: 10px; max-width: 600px; margin-top: 10px; margin-bottom: 10px">
+          <form data-toggle="validator" role="form" id = "submitGroup" novalidate >
+            
+            <div class="form-group">
+              <label for="exampleInputEmail1">Enter group name</label>
+              <input type="text" class="form-control" id="group_name_field" placeholder="Example: COS 320 Final Study Group @ Wilson" required>
+              <small id="nameHelp" class="form-text text-muted">Try and pick a name that best represents your group.</small>
+            </div>
+            <!-- no need for password, link it to the owner -->
+            <!-- <div class="form-group">
+              <label for="exampleSelect1">Example select</label>
+              <select class="form-control" id="exampleSelect1">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+              </select>
+            </div> -->
+            <div class="form-group">
+              <label>Which class?</label>
+              <!-- <pre>Class: {{selected | json}}</pre> -->
+              <input type="text" ng-model="selected" placeholder="COS 320" id = "group_class_field" uib-typeahead="class for class in classes | filter:$viewValue | limitTo:8" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+              <label for="exampleInputEmail1">Location</label>
+              <input type="text" class="form-control" id="location" placeholder="JStreet library in Wilson, table on the left." required>
+              <small id="nameHelp" class="form-text text-muted">Tell people enough information so they can find your group!</small>
+            </div>
+
+
+            <div class="form-group">
+              <label for="exampleTextarea">Description (Optional)</label>
+              <textarea class="form-control" id="details_field" placeholder="Add any additional information you want others to know about your group." rows="3"></textarea>
+            </div>
+
+            <!-- radio buttons -->
+           <fieldset class="form-group">
+           <div>
+             <label>Type of Group</label>
+             <!-- <button type="button" class="btn btn-lg btn-danger" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">Click to toggle popover</button> -->
+
+             <button id="popoverData" class="btn-xs" href="#" data-content="A public group is visible to everyone. A private group can be visible to only people in your class, or specific people." rel="popover" data-placement="right" data-original-title="Public vs. Private" data-trigger="hover">?</button>
+           </div>
+
+            <div class="form-inline" id="radios">
+              <label class="form-check-label col-xs-3">
+                <input type="radio" name="radio" ng-click="privateGroupHide()" class="form-check-input" name="optionsRadios" id="publicGroupRadio" value="public" checked>
+                Public Group
+              </label>
+            </div>
+            <div class="form-check">
+            <label class="form-check-label col-xs-3">
+                <input ng-click="privateGroupShow()" name="radio" type="radio" class="form-check-input" name="optionsRadios" id="privateGroupRadio" value="private">
+                Private Group
+              </label>
+            </div>    
+          </fieldset>
+
+
+          <!-- Select type of private group -->
+          <div class="form-group" style="display:none" id="private_group">
+            <label for="exampleTextarea">People to Invite:</label>
+            <br>
+            <div ng-repeat="user in invitedFriends" style="float:left; padding: 1px">
+              <label>{{user.name}}</label>
+              <button class="btn-xs" ng-click="deleteInvitedFriend(user.name)">x</button>
+              <!-- <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> -->
+            </div>
+            <input type="text" ng-model="invite" id="invite_friends" placeholder="Example: John Doe" uib-typeahead="name for name in inviteable | filter:$viewValue | limitTo:8" class="form-control" typeahead-on-select="onInvite($item, $model, $label)" autocomplete="off">
+            <a class="btn btn-sm" id="invite_class" ng-click="inviteFriend()">Add everyone from my class</a>
+            <br>
+            <label for="exampleTextarea">Hide this event from:</label>
+            <br>
+            <div ng-repeat="user in blacklistedFriends" style="float:left; padding: 1px">
+              <label>{{user.name}}</label>
+              <button class="btn-xs" ng-click="deleteBlacklistedFriend(user.name)">x</button>
+              <!-- <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> -->
+            </div>
+            <input type="text" ng-model="hide" id="blacklist_friends" placeholder="Example: Jane Doe" uib-typeahead="name for name in blacklistable | filter:$viewValue | limitTo:8" class="form-control" typeahead-on-select="onBlacklist($item, $model, $label)" >
+          </div>
+
+
+          <div class="col-xs-5"></div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+          </form>
+          <div class="col-xs-5"></div>
+          </div>
+        </uib-tab>
+        <uib-tab index="3" heading="Your Groups">
+          <label> Search by name or phrase: <input ng-model="searchGroups"></label>
+          <div ng-repeat="group in searchYourGroupsArray | filter:searchGroups"> <!--  | filter:searchGroups -->
+            <div class="card card-inverse card-primary mb-3 text-center" style="background-color: #0275d8; border-color: #0275d8; color: white">
+              <div class="card-block">
+                  <h4 class="card-title">{{group.name}}</h4>
+                  <h6 class="card-subtitle mb-2">Class: {{group.class}}</h6>
+                  <p class="card-text">Location: {{group.location}}</p>
+                  <p class="card-text">Description: {{group.details}}</p>
+                  <footer style="color:white">Creator: {{group.adminName}}</footer>
+                  <button ng-click="deleteYourGroup(group.name, group.class, group.location)">Delete Your Group</button>
+              </div>
+            </div>
+            <!-- <div>
+              <label>{{group.name}}</label>
+              <pre>{{group.class}}</pre>
+              <pre>{{group.location}}</pre>
+              <button ng-click="deleteYourGroup(group.name, group.class, group.location)">Delete Your Group</button>
+            </div> -->
+          </div>
+        </uib-tab>
+        <uib-tab>
+          <uib-tab-heading>
+                      <i class="fa fa-user-circle fa-2x" aria-hidden="true"></i>
+
+          </uib-tab-heading>
+        </uib-tab>
+      </uib-tabset>
+      </div>
+  
+      <!-- <form name="outerForm" class="tab-form-demo"> -->
+      
+      <!-- </form> -->
+<!-- <label>Which class?</label>
+              <pre>Class: {{selected | json}}</pre>
+              <input type="text" ng-model="selected" uib-typeahead="class for class in classes | filter:$viewValue | limitTo:8" class="form-control"> -->
+      <!-- <div class="tabbable tabs-left">
+        <ul class="nav nav-tabs">
+          <li> 
+            <a href="#" data-toggle="tab">One</a>
+          </li>
+          <li>
+          </li>
+      </div> -->
+
+      
+    </div>
+    <!-- <div id = "login_buttons">
+      <button ng-click =facebookSignin($scope)>Facebook Signin</button>
+      <button ng-click =facebookSignout($scope)>Facebook SignOut</button>
+    </div> -->
+
+    <div class="wrapper" id="login" style="display:none; "> <!-- dont put row here in class -->
+      <form data-toggle="validator" role="form" class="form-signin" id = "submitForm" novalidate>       
+        <h2 class="form-signin-heading text-center" style="font-family: 'Droid Sans', sans-serif;">GroupFinder Login</h2> <!-- please login -->
+        <div class="form-group">
+          <input id = "name" type="text" class="form-control" name="username" placeholder="Username" required="" autofocus="" style="display:none" data-validate="false"/>
+        </div>
+        <!-- <input type="text" class="form-control" id = "username" name="username" placeholder="Email Address" required="" autofocus="" /> -->
+        <div class="form-group">
+          <!-- <label for="inputEmail" class="control-label">Email</label> -->
+          <input type="email" class="form-control" id="username" name="username" placeholder="Email (example@company.com)" required>
+          <!-- data-error="Sorry, that is an invalid email." -->
+          <!-- <div class="help-block with-errors"></div> -->
+        </div>
+        <div class="form-group">
+          <!-- <label for="inputPassword" class="conrol-label">Password</label> -->
+          <input type="password" class="form-control" id="password" name="password" placeholder="Password" required=""/> 
+        </div>     
+        <div class="form-group">
+          <label class="checkbox col-xs-6">
+            <input type="checkbox" value="remember-me" id="rememberMe" name="rememberMe"> Remember me
+          </label>
+        </div>
+        <div class="form-group">
+          <a class=" col-xs-6 text-right" style="padding: 10px; cursor:pointer; font-family: 'Droid Sans', sans-serif;" ng-click="expandLogin()">New User?</a>
+        </div>
+        <div class="form-group">
+          <button id="submitButton" class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+        </div>
+        <hr>
+        <!-- <button id="facebookButton" class="btn btn-lg btn-primary btn-block" ng-click =facebookSignin($scope)>Login with Facebook</button>  -->
+
+        <!-- <legend>OR</legend> -->
+
+        <a id ="facebookButton" ng-click=facebookSignin($scope) class="btn btn-block btn-social btn-facebook">
+          <i class="fa fa-facebook"></i> Sign in with Facebook
+        </a>
+        <!-- <button class="btn btn-lg btn-primary btn-block" ng-click =googleSignin($scope)>Login with Google</button> -->
+        <!-- <div class="g-signin2 btn btn-lg btn-primary btn-block" data-onsuccess="onSignIn"></div>
+        <a href="#" ng-click="signOut();">Sign out</a> -->
+
+      </form>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- ADD FIREBASE -->
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/3.6.6/firebase.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    <!-- Angular -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+
+    <!-- AngularFire -->
+    <script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
+
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+
+<!-- <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="262567420074-pcc1r4n1rr4j5qsla5nbgukofri7lcej.apps.googleusercontent.com"> -->
+<link rel="stylesheet" href="style.css">
+
+
+    <script src="ui-bootstrap-tpls-2.5.0.js"></script>
+<script type="text/javascript" src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <script src="bootstrap-tokenfield.js"></script>
+    <script src="bloodhound.min.js"></script>
+    <script src="typeahead.jquery.min.js"></script>
+
+    <script src="typeahead.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular-route.js"></script>
+    
+
+
+
+
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyCpeVmvbwaoZh4ZoNFihVl21pv6X3848Ms",
+        authDomain: "groupfinder-edfd9.firebaseapp.com",
+        databaseURL: "https://groupfinder-edfd9.firebaseio.com",
+        storageBucket: "groupfinder-edfd9.appspot.com",
+        messagingSenderId: "360928347003"
+      };
+      firebase.initializeApp(config);
+    </script>
+    <script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '668941546626285',
+      xfbml      : true,
+      version    : 'v2.8'
+    });
+    FB.AppEvents.logPageView();
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "http://connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+        <script src="app.js"></script>
+
+  </body>
+</html>
+
+<!-- <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Welcome to Firebase Hosting</title>
+    <style media="screen">
+      body {
+        font-family: Roboto, Arial, sans-serif;
+        background: #ECEFF1;
+        color: rgba(0,0,0,0.87);
+      }
+
+      a {
+        color: rgb(3,155,229);
+      }
+
+      #message {
+        max-width: 400px;
+        margin: 40px auto;
+        box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2),0 1px 1px 0 rgba(0,0,0,0.14),0 2px 1px -1px rgba(0,0,0,0.12);
+        border-radius: 2px;
+        background: white;
+        padding: 16px 24px;
+      }
+
+      #message h1 {
+        font-size: 22px;
+        font-weight: 500;
+        text-align: center;
+        margin: 0 0 16px;
+      }
+
+      #message p {
+        font-weight: 300;
+        line-height: 150%;
+      }
+
+      #message ul {
+        list-style: none;
+        margin: 16px 0 0;
+        padding: 0;
+        text-align: center;
+      }
+
+      #message li a {
+        display: inline-block;
+        padding: 8px;
+        text-transform: uppercase;
+        text-decoration: none;
+        font-weight: 500;
+        background: rgb(3,155,229);
+        color: white;
+        border: 1px solid rgb(3,155,229);
+        border-radius: 3px;
+        font-size: 14px;
+        box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="message">
+      <h1>Welcome to Firebase Hosting</h1>
+      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
+      <ul>
+        <li><a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a></li>
+      </ul>
+    </div>
+  </body>
+</html>
+ -->

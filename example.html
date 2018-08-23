@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+<h1> Hello</h1>
+<button onclick = "facebookSignin()">Facebook Signin</button>
+<button onclick = "facebookSignout()">Facebook Signout</button>
+
+
+		<script src="https://www.gstatic.com/firebasejs/3.6.6/firebase.js"></script>
+
+<script>
+		  // Initialize Firebase
+		  var config = {
+		    apiKey: "AIzaSyCpeVmvbwaoZh4ZoNFihVl21pv6X3848Ms",
+		    authDomain: "groupfinder-edfd9.firebaseapp.com",
+		    databaseURL: "https://groupfinder-edfd9.firebaseio.com",
+		    storageBucket: "groupfinder-edfd9.appspot.com",
+		    messagingSenderId: "360928347003"
+		  };
+		  firebase.initializeApp(config);
+		</script>
+		<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '668941546626285',
+      xfbml      : true,
+      version    : 'v2.8'
+    });
+    FB.AppEvents.logPageView();
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "http://connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+
+				<script src="main.js"></script>
+
+</body>
+</html>

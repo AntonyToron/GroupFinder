@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+	<title></title>
+</head>
+	<body ng-controller="MainCtrl">
+		<input type="text" ng-model="data.text"/>
+		<h1> You said: {{data.text}}</h1>
+		<button ng-click =signIn($scope)>Facebook Signin</button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		<!-- ADD FIREBASE -->
+		<!-- Firebase -->
+		<script src="https://www.gstatic.com/firebasejs/3.6.6/firebase.js"></script>
+
+		<!-- Angular -->
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+
+		<!-- AngularFire -->
+		<script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
+
+
+		<script>
+		  // Initialize Firebase
+		  var config = {
+		    apiKey: "AIzaSyCpeVmvbwaoZh4ZoNFihVl21pv6X3848Ms",
+		    authDomain: "groupfinder-edfd9.firebaseapp.com",
+		    databaseURL: "https://groupfinder-edfd9.firebaseio.com",
+		    storageBucket: "groupfinder-edfd9.appspot.com",
+		    messagingSenderId: "360928347003"
+		  };
+		  firebase.initializeApp(config);
+		</script>
+		<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '668941546626285',
+      xfbml      : true,
+      version    : 'v2.8'
+    });
+    FB.AppEvents.logPageView();
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "http://connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+				<script src="app.js"></script>
+
+	</body>
+</html>

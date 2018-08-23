@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html ng-app="app"> <!-- could be container-fluid too -->
+<head>
+  <!-- Mobile Friendly -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Icons -->
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+  <script src="https://use.fontawesome.com/8ddbabddf6.js"></script>
+  <link rel="stylesheet/less" type="text/css" href="bootstrap-social.css"/>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Playfair+Display:900" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Crimson+Text:700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Droid+Sans:700" rel="stylesheet">
+  <link href='http://fonts.googleapis.com/css?family=Gafata|Roboto:700' rel='stylesheet' type='text/css'>
+  <link href="https://fonts.googleapis.com/css?family=Julius+Sans+One" rel="stylesheet">
+  <title></title>
+</head>
+<body ng-controller="MainController" ng-cloak>
+  <div id="display" style="display:none;">
+    <nav class="navbar navbar-default navbar-fixed-top"> <!-- navbar-fixed-topnavbar-fixed-top -->
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapse-navbar" aria-expanded="false">
+            <span class="sr-only">Toggle Navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand navbar-tab" index="0" href="#/dashboard" style="padding-top: 20px">GroupFinder</a> <!-- need to edit this to make it look better, padding-top is a hacky way to do it -->
+        </div>
+
+        <!-- Navbar content -->
+        <div class="collapse navbar-collapse" id="collapse-navbar">
+          <ul class="nav navbar-nav navbar-left">
+            <li id="mainTab" class="active">
+              <a index ="0" class="navbar-tab" id="mainTabClick" href="#/dashboard">
+                <i class="fa fa-user-circle fa-2x" aria-hidden="true"></i>
+                <!-- NOTE: This is making the navbar expand to be bigger -->
+                <b>Dashboard</b>
+                <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li>
+              <a index ="1" class="navbar-tab" href="#/lookup">
+                <i class="fa fa-search fa-2x" aria-hidden="true"></i>
+                <b>Lookup</b>
+              </a>
+            </li>
+            <li>
+              <a index ="2" class="navbar-tab" href="#/create">
+                <i class="fa fa-plus fa-2x" aria-hidden="true"></i>
+                <b>Create New Group</b>
+              </a>
+            </li>
+            <li>
+              <a index ="3" class="navbar-tab" href="#/yourGroups">
+                <i class="fa fa-group fa-2x" aria-hidden="true"></i>
+                <b>Your Groups</b>
+              </a>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right" style="height: 58px">
+            <li style="height: 100%">
+              <a class="navbar-brand" style="padding: 0px; height: 100%">
+                <img class="img-thumbnail" id="thumbnail-image" style="height: 100%; width: auto;" src=""></img> <!-- User image -->
+              </a>
+            </li>
+            <li class="dropdown" style="height: 100%; padding-top: 4px">
+              <a class="dropdown-toggle noselect" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="height: 100%; width: 160px">
+                <i class="fa fa-cog" aria-hidden="true"></i> <!-- fa-2x -->
+                <b>Your Account</b>
+
+              <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a index="4" class="dropdown-item" href="#/profile">Your Profile</a></li>
+                <li><a index="5" class="dropdown-item" href="#/settings">Settings</a></li>
+                <li><a style="cursor:pointer" ng-click="deleteCurrentUser($scope)">Delete Account</a></li>
+                <li><a style="cursor:pointer" ng-click="signout($scope)">Sign out</a></li>
+              </ul>
+            </li>
+          </ul>
+
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+
+    <div class="container-fluid">
+      <div index= 0 class="col-md-6 col-md-offset-3">
+        <h3>News</h3>
+        <h4>Study breaks on campus:</h4>
+        <hr>
+
+
+
+        <h3>All Groups</h3>
+        <label> Search all groups: <input ng-model="searchAllGroups"></label>
+        <div ng-repeat="group in searchGroupsArray | filter:searchAllGroups">
+          <div class="card-outer text-center container-fluid"> <!-- card-inverse card-primary mb-3 --> <!--style="background-color: #0275d8; border-color: #0275d8; color: white"-->
+            <!-- <div class="card-block "> -->
+              <div style="width: 20%; float:left"> <!-- padding on sides from border size? -->
+                <!-- <h3>OTHER TEXT</h3> -->
+                <!-- <a href="#" class="font-awesome-social"> -->
+                  <i class="fa fa-check fa-4x check-plain" id="checkmark" ng-click="checked()" style="cursor:pointer" aria-hidden="true"></i>
+                  <!-- <b>Going</b> -->
+                <!-- </a> -->
+                <br>
+                <!-- <a href="#" class="font-awesome-social"> -->
+                  <i class="fa fa-question fa-4x question-question" id="questionmark" ng-click="questioned()" style="cursor:pointer" aria-hidden="true"></i>
+                  <!-- <b>Maybe</b> -->
+                <!-- </a> -->
+                <br>
+                <!-- <a style="cursor:pointer" class="font-awesome-social" id="star"> -->
+                  <i class="fa fa-star-o fa-4x" ng-click="starred()" id="outline-star" style="cursor:pointer" aria-hidden="true"></i>
+                  <i class="fa fa-star fa-4x icon-d" id="filled-star" aria-hidden="true" style="display:none"></i>
+
+                  <!-- <b>Favorite</b> -->
+                <!-- </a> -->
+              </div>
+              <div style="width: 80%; float:right" class="text-center">
+                <h4 class="card-title">{{group.name}}</h4>
+                <h6 class="card-subtitle mb-2">Class: {{group.class}}</h6>
+                <p class="card-text">Location: {{group.location}}</p>
+                <p class="card-text">Description: {{group.details}}</p>
+                <footer>Creator: {{group.adminName}}</footer>
+                <button ng-click="deleteYourGroup(group.name, group.class, group.location)">Delete Your Group</button>
+              </div>
+            <!-- </div> -->
+          </div>
+        </div>
+      </div>
+      <div index= 1 style="display:none" class="col-md-6 col-md-offset-3">
+        <div style="padding: 10px">
+          <label> Search by name or phrase: <input ng-model="searchText"></label>
+          <div ng-repeat="user in usersData | filter:searchText"> <!-- filters through -->
+            <div>
+              <label>{{user.name}}</label>
+              <pre>{{user.email}}</pre>
+              <pre>Friends: {{user.friends}}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div index= 2 style="display:none" class="col-md-6 col-md-offset-3">
+      <div class="container-fluid center" style="background-color:white; padding: 10px; max-width: 600px; margin-top: 10px; margin-bottom: 10px">
+              <form data-toggle="validator" role="form" id = "submitGroup" novalidate >
+            
+        <div class="form-group">
+          <label for="exampleInputEmail1">Enter group name</label>
+          <input type="text" class="form-control" id="group_name_field" placeholder="Example: COS 320 Final Study Group @ Wilson" required>
+          <small id="nameHelp" class="form-text text-muted">Try and pick a name that best represents your group.</small>
+        </div>
+        <div class="form-group">
+          <label>Which class?</label>
+          <!-- <pre>Class: {{selected | json}}</pre> -->
+          <input type="text" ng-model="selected" placeholder="COS 320" id = "group_class_field" uib-typeahead="class for class in classes | filter:$viewValue | limitTo:8" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+          <label for="exampleInputEmail1">Location</label>
+          <input type="text" class="form-control" id="location" placeholder="JStreet library in Wilson, table on the left." required>
+          <small id="nameHelp" class="form-text text-muted">Tell people enough information so they can find your group!</small>
+        </div>
+        <div class="form-group">
+          <label for="exampleTextarea">Description (Optional)</label>
+          <textarea class="form-control" id="details_field" placeholder="Add any additional information you want others to know about your group." rows="3"></textarea>
+        </div>
+
+        <!-- radio buttons -->
+        <fieldset class="form-group">
+          <div>
+            <label>Type of Group</label>
+            <button id="popoverData" class="btn-xs" href="#" data-content="A public group is visible to everyone. A private group can be visible to only people in your class, or specific people." rel="popover" data-placement="right" data-original-title="Public vs. Private" data-trigger="hover">?</button>
+          </div>
+
+          <div class="form-inline" id="radios">
+            <label class="form-check-label col-xs-3">
+            <input type="radio" name="radio" ng-click="privateGroupHide()" class="form-check-input" name="optionsRadios" id="publicGroupRadio" value="public" checked>
+            Public Group
+            </label>
+          </div>
+          <div class="form-check">
+            <label class="form-check-label col-xs-3">
+            <input ng-click="privateGroupShow()" name="radio" type="radio" class="form-check-input" name="optionsRadios" id="privateGroupRadio" value="private">
+            Private Group
+            </label>
+          </div>    
+        </fieldset>
+
+
+        <!-- Select type of private group -->
+        <div class="form-group" style="display:none" id="private_group">
+          <label for="exampleTextarea">People to Invite:</label>
+          <br>
+          <div ng-repeat="user in invitedFriends" style="float:left; padding: 1px">
+            <label>{{user.name}}</label>
+            <button class="btn-xs" ng-click="deleteInvitedFriend(user.name)">x</button>
+            <!-- <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> -->
+          </div>
+          <input type="text" ng-model="invite" id="invite_friends" placeholder="Example: John Doe" uib-typeahead="name for name in inviteable | filter:$viewValue | limitTo:8" class="form-control" typeahead-on-select="onInvite($item, $model, $label)" autocomplete="off">
+          <a class="btn btn-sm" id="invite_class" ng-click="inviteFriend()">Add everyone from my class</a>
+          <br>
+          <label for="exampleTextarea">Hide this event from:</label>
+          <br>
+          <div ng-repeat="user in blacklistedFriends" style="float:left; padding: 1px">
+            <label>{{user.name}}</label>
+            <button class="btn-xs" ng-click="deleteBlacklistedFriend(user.name)">x</button>
+            <!-- <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> -->
+          </div>
+          <input type="text" ng-model="hide" id="blacklist_friends" placeholder="Example: Jane Doe" uib-typeahead="name for name in blacklistable | filter:$viewValue | limitTo:8" class="form-control" typeahead-on-select="onBlacklist($item, $model, $label)" >
+        </div>
+
+
+        <div class="col-xs-5"></div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+        </form>
+        <div class="col-xs-5"></div>
+        </div>
+      </div>
+      <div index= 3 style="display:none" class="col-md-6 col-md-offset-3">
+        <label> Search by name or phrase: <input ng-model="searchGroups"></label>
+        <div ng-repeat="group in searchYourGroupsArray | filter:searchGroups"> <!--  | filter:searchGroups -->
+          <div class="card-outer text-center"> <!-- card-inverse card-primary mb-3 --> <!--style="background-color: #0275d8; border-color: #0275d8; color: white"-->
+            <div class="card-block">
+              <h4 class="card-title">{{group.name}}</h4>
+              <h6 class="card-subtitle mb-2">Class: {{group.class}}</h6>
+              <p class="card-text">Location: {{group.location}}</p>
+              <p class="card-text">Description: {{group.details}}</p>
+              <footer>Creator: {{group.adminName}}</footer>
+              <button ng-click="deleteYourGroup(group.name, group.class, group.location)">Delete Your Group</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div index= 4 class="col-md-6 col-md-offset-3" style="display:none">
+        <h3>Your Profile</h3>
+        
+      </div>
+      <div index= 5 class="col-md-6 col-md-offset-3" style="display:none">
+        <h3>Settings</h3>
+        <div id="admin" style="display:none">
+          You are an admin
+          <button ng-click="updateCourses()">Update the database for courses</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <!-- Login page -->
+  <div class="wrapper" id="login" style="display:none; "> <!-- dont put row here in class -->
+    <form data-toggle="validator" role="form" class="form-signin" id = "submitForm" novalidate>       
+    <h2 class="form-signin-heading text-center" style="font-family: 'Droid Sans', sans-serif;">GroupFinder Login</h2> <!-- please login -->
+    <div class="form-group">
+      <input id = "name" type="text" class="form-control" name="username" placeholder="Username" required="" autofocus="" style="display:none" data-validate="false"/>
+    </div>
+    <div class="form-group">
+      <input type="email" class="form-control" id="username" name="username" placeholder="Email (example@company.com)" required>
+    </div>
+    <div class="form-group">
+      <input type="password" class="form-control" id="password" name="password" placeholder="Password" required=""/> 
+    </div>     
+    <div class="form-group">
+      <label class="checkbox col-xs-6">
+      <input type="checkbox" value="remember-me" id="rememberMe" name="rememberMe"> Remember me
+      </label>
+    </div>
+    <div class="form-group">
+      <a class=" col-xs-6 text-right" style="padding: 10px; cursor:pointer; font-family: 'Droid Sans', sans-serif;" ng-click="expandLogin()">New User?</a>
+    </div>
+    <div class="form-group">
+      <button id="submitButton" class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+    </div>
+    <hr>
+    <a id ="facebookButton" ng-click=facebookSignin($scope) class="btn btn-block btn-social btn-facebook">
+      <i class="fa fa-facebook"></i> Sign in with Facebook
+    </a>
+    </form>
+  </div>
+
+
+
+
+
+
+  <!-- Script Imports -->
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/3.6.6/firebase.js"></script>
+
+  <!-- JQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    <!-- Angular -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  <!-- AngularFire -->
+    <script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+  <!-- Angular Route -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular-route.js"></script>
+
+  <!-- UI bootstrap -->
+  <script src="ui-bootstrap-tpls-2.5.0.js"></script>
+
+  <!-- Bootstrap validator -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+
+
+  <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyCpeVmvbwaoZh4ZoNFihVl21pv6X3848Ms",
+        authDomain: "groupfinder-edfd9.firebaseapp.com",
+        databaseURL: "https://groupfinder-edfd9.firebaseio.com",
+        storageBucket: "groupfinder-edfd9.appspot.com",
+        messagingSenderId: "360928347003"
+      };
+      firebase.initializeApp(config);
+    </script>
+    <script>
+    window.fbAsyncInit = function() {
+      FB.init({
+        appId      : '668941546626285',
+        xfbml      : true,
+        version    : 'v2.8'
+      });
+      FB.AppEvents.logPageView();
+    };
+
+    (function(d, s, id){
+       var js, fjs = d.getElementsByTagName(s)[0];
+       if (d.getElementById(id)) {return;}
+       js = d.createElement(s); js.id = id;
+       js.src = "http://connect.facebook.net/en_US/sdk.js";
+       fjs.parentNode.insertBefore(js, fjs);
+     }(document, 'script', 'facebook-jssdk'));
+  </script>
+
+
+
+  
+
+  <!-- Personal Script -->
+  <script src="main.js"></script>
+  <link href="extrastyle.css" rel="stylesheet">
+
+</body>
+</html>
